@@ -1,0 +1,82 @@
+.Ticket__container {
+  height: 368px;
+  width: 296px;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 3px;
+  background-color: #ffffff;
+  margin-top: 17px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Ticket__title {
+  display: flex;
+  justify-content: space-between;
+  margin: 14px 16px;
+  & span:first-child {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.Ticket__magic_wand {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.Ticket__first_block_title, .Ticket__second_block_title {
+  display: flex;
+  font-size: 14px;
+  margin: 12px 16px 0 16px;
+  & span:first-child {
+    font-weight: 600;
+  }
+  & span:last-child {
+    font-weight: 300;
+    padding-left: 8px;
+  }
+}
+
+.Ticket__second_block_title {
+  margin: 16px 16px 8px 16px;
+}
+
+.Ticket__first_block_cells, .Ticket__second_block_cells {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 8px 11px 0 11px;
+}
+
+.Ticket__button_container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.Ticket__button {
+  height: 43px;
+  width: 178px;
+  text-align: center;
+  line-height: 43px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 40px;
+  transition: 0.15s;
+  &:hover {
+    background-color: #dddddd;
+    cursor: pointer;
+  }
+  &:active {
+    background-color: #ffffff;
+  }
+}
+
+.Ticket__result {
+  font-size: 14px;
+  padding: 0 16px;
+  & > p:nth-child(2) {
+    padding-top: 8px;
+  }
+}

@@ -1,0 +1,22 @@
+.Cell__container {
+  height: 39px;
+  width: 39px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 39px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.Cell__selected {
+  height: 34px;
+  width: 34px;
+  line-height: 34px;
+  margin: 2.5px;
+  background-color: #FFD205;
+}
