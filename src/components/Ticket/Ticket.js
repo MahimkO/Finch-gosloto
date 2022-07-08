@@ -86,7 +86,7 @@ export function Ticket({ticketId}) {
   const handleResultButton = async () => {
     const [firstBlockRandomNumbers, secondBlockRandomNumbers] = generateArraysWithRandomNumbers();
     const firstBlockIdenticalNumbers = [], secondBlockIdenticalNumbers = [];
-    let test = false;
+    let isWon = false;
 
     const firstBlockState = Object.entries(firstBlockCells);
     for (let i = 0; i < firstBlockState.length; i += 1) {
@@ -111,7 +111,7 @@ export function Ticket({ticketId}) {
           secondBlockIdenticalNumbers
         }
       });
-      test = true;
+      isWon = true;
     } else {
       setResult({
         isWon: false,
@@ -120,7 +120,7 @@ export function Ticket({ticketId}) {
     }
 
     // ОТПРАВЛЯЕМ ДАННЫЕ НА БЭК
-    const response = await sendDataToBack(test);
+    const response = await sendDataToBack(isWon);
 
     // без setInterval
     // if (!response.ok) {
@@ -133,7 +133,7 @@ export function Ticket({ticketId}) {
     //     }
     //     attemptsToConnectWithBack += 1;
     //   }
-    //   alert(`Error: ${response.status}`);
+    //   console.log(`Error: ${response.status}`);
     // }
 
     if (!response.ok) {
@@ -156,7 +156,7 @@ export function Ticket({ticketId}) {
   };
 
   const sendDataToBack = async (isWon) => {
-    const url = 'https://yandex.ru/';
+    const url = 'http://yandex.ru/';
     const response = await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
