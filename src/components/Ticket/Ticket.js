@@ -86,10 +86,12 @@ export function Ticket({ticketId}) {
   const handleResultButton = async () => {
     const [firstBlockRandomNumbers, secondBlockRandomNumbers] = generateArraysWithRandomNumbers();
     const firstBlockIdenticalNumbers = [], secondBlockIdenticalNumbers = [];
+    const firstBlockSelectedNumbers = [], secondBlockSelectedNumbers = [];
     let isWon = false;
 
     const firstBlockState = Object.entries(firstBlockCells);
     for (let i = 0; i < firstBlockState.length; i += 1) {
+      if (firstBlockState[i][1] === true) firstBlockSelectedNumbers.push(+firstBlockState[i][0]);
       if (firstBlockState[i][1] === true && firstBlockRandomNumbers.includes(+firstBlockState[i][0])) {
         firstBlockIdenticalNumbers.push(firstBlockState[i][0]);
       }
@@ -97,6 +99,7 @@ export function Ticket({ticketId}) {
 
     const secondBlockState = Object.entries(secondBlockCells);
     for (let i = 0; i < secondBlockState.length; i += 1) {
+      if (secondBlockState[i][1] === true) secondBlockSelectedNumbers.push(+secondBlockState[i][0]);
       if (secondBlockState[i][1] === true && secondBlockRandomNumbers.includes(+secondBlockState[i][0])) {
         secondBlockIdenticalNumbers.push(secondBlockState[i][0]);
       }
@@ -120,13 +123,13 @@ export function Ticket({ticketId}) {
     }
 
     // ОТПРАВЛЯЕМ ДАННЫЕ НА БЭК
-    const response = await sendDataToBack(isWon);
+    const response = await sendDataToBack(isWon, firstBlockSelectedNumbers, secondBlockSelectedNumbers);
 
     // без setInterval
     // if (!response.ok) {
     //   let attemptsToConnectWithBack = 0;
     //   while (attemptsToConnectWithBack < 2) {
-    //     const newResponse = await sendDataToBack(test);
+    //     const newResponse = await sendDataToBack(isWon, firstBlockSelectedNumbers, secondBlockSelectedNumbers);
     //     if (newResponse.ok) {
     //       const result = await newResponse.json();
     //       return result;
@@ -139,7 +142,7 @@ export function Ticket({ticketId}) {
     if (!response.ok) {
       let attemptsToConnectWithBack = 0;
       let responseId = setInterval(async () => {
-        const newResponse = await sendDataToBack(test);
+        const newResponse = await sendDataToBack(isWon, firstBlockSelectedNumbers, secondBlockSelectedNumbers);
         if (newResponse.ok) {
           const result = await newResponse.json();
           clearInterval(responseId);
@@ -155,7 +158,7 @@ export function Ticket({ticketId}) {
     }
   };
 
-  const sendDataToBack = async (isWon) => {
+  const sendDataToBack = async (isWon, firstBlockSelectedNumbers, secondBlockSelectedNumbers) => {
     const url = 'http://yandex.ru/';
     const response = await fetch(url, {
       method: 'POST',
@@ -165,8 +168,8 @@ export function Ticket({ticketId}) {
       },
       body: JSON.stringify({
         selectedNumber: {
-          firstField: firstBlockCells,
-          secondField: secondBlockCells
+          firstField: firstBlockSelectedNumbers,
+          secondField: secondBlockSelectedNumbers
         },  
         isTicketWon: isWon
       })
