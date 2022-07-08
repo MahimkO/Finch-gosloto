@@ -83,9 +83,10 @@ export function Ticket({ticketId}) {
     return [firstBlockRandomNumbers, secondBlockRandomNumbers];
   };
 
-  const handleResultButton = () => {
+  const handleResultButton = async () => {
     const [firstBlockRandomNumbers, secondBlockRandomNumbers] = generateArraysWithRandomNumbers();
     const firstBlockIdenticalNumbers = [], secondBlockIdenticalNumbers = [];
+    let test = false;
 
     const firstBlockState = Object.entries(firstBlockCells);
     for (let i = 0; i < firstBlockState.length; i += 1) {
@@ -110,12 +111,68 @@ export function Ticket({ticketId}) {
           secondBlockIdenticalNumbers
         }
       });
+      test = true;
     } else {
       setResult({
         isWon: false,
         message: 'К сожалению, Вы не выиграли :('
-      })
+      });
     }
+
+    // ОТПРАВЛЯЕМ ДАННЫЕ НА БЭК
+    const response = await sendDataToBack(test);
+
+    // без setInterval
+    // if (!response.ok) {
+    //   let attemptsToConnectWithBack = 0;
+    //   while (attemptsToConnectWithBack < 2) {
+    //     const newResponse = await sendDataToBack(test);
+    //     if (newResponse.ok) {
+    //       const result = await newResponse.json();
+    //       return result;
+    //     }
+    //     attemptsToConnectWithBack += 1;
+    //   }
+    //   alert(`Error: ${response.status}`);
+    // }
+
+    if (!response.ok) {
+      let attemptsToConnectWithBack = 0;
+      let responseId = setInterval(async () => {
+        const newResponse = await sendDataToBack(test);
+        if (newResponse.ok) {
+          const result = await newResponse.json();
+          clearInterval(responseId);
+          return result;
+        }
+        attemptsToConnectWithBack += 1;
+        console.log(`attempt ${attemptsToConnectWithBack}`)
+        if (attemptsToConnectWithBack === 2) {
+          console.log(`Error: ${response.status}`);
+          clearInterval(responseId);
+        }
+      }, 2000);
+    }
+  };
+
+  const sendDataToBack = async (isWon) => {
+    const url = 'https://yandex.ru/';
+    const response = await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        selectedNumber: {
+          firstField: firstBlockCells,
+          secondField: secondBlockCells
+        },  
+        isTicketWon: isWon
+      })
+    });
+
+    return response;
   };
 
   return (
@@ -132,7 +189,12 @@ export function Ticket({ticketId}) {
               <div className='Ticket__result'>
                 <p>{result.message}</p>
                 <p>В Поле 1 Вы угадали цифры: {result.numbers.firstBlockIdenticalNumbers.join(',')}</p>
-                <p>В Поле 2 Вы угадали цифры: {result.numbers.secondBlockIdenticalNumbers}</p>
+                {result.numbers.secondBlockIdenticalNumbers.length > 0 
+                ? (
+                  <p>В Поле 2 Вы угадали цифры: {result.numbers.secondBlockIdenticalNumbers}</p>
+                  ) 
+                : null }                
+                <p>Всего цифр угадано: {result.numbers.firstBlockIdenticalNumbers.length + result.numbers.secondBlockIdenticalNumbers.length}</p>
               </div>
             )
             : (
